@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wall — In Memory of Those Who Built & Were Broken</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #e0e0e0;
+    --dim: #555;
+    --accent: #d4a853;
+    --blue: #60a5fa;
+    --red: #ef4444;
+    --green: #22c55e;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── Terminal header ── */
+  .terminal {
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2rem 2rem 1rem;
+    font-size: 0.8rem;
+    color: var(--dim);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .terminal .prompt { color: var(--green); }
+  .terminal .cmd { color: var(--text); }
+  .terminal .output { color: var(--dim); margin-left: 1rem; }
+
+  /* ── Title ── */
+  .title-section {
+    text-align: center;
+    padding: 2rem 2rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .title-section h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .title-section .subtitle {
+    font-size: 0.95rem;
+    color: var(--dim);
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ── The Wall ── */
+  .wall {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .brick {
+    border-left: 2px solid var(--dim);
+    padding: 1.5rem 0 1.5rem 2rem;
+    margin-bottom: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .brick:hover {
+    border-left-color: var(--accent);
+    background: rgba(212, 168, 83, 0.03);
+  }
+  .brick.active {
+    border-left-color: var(--accent);
+    border-left-width: 3px;
+  }
+  .brick.active .story { display: block; }
+
+  .brick .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .brick .dates {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin-bottom: 0.5rem;
+  }
+  .brick .oneliner {
+    font-size: 0.9rem;
+    color: var(--blue);
+    font-style: italic;
+  }
+
+  .story {
+    display: none;
+    margin-top: 1.25rem;
+    padding: 1.25rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 4px;
+    line-height: 1.8;
+    font-size: 0.88rem;
+  }
+  .story .built {
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+  .story .broken {
+    color: var(--red);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+  .story .legacy {
+    color: var(--accent);
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* ── Separator ── */
+  .sep {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--dim), transparent);
+    opacity: 0.3;
+  }
+
+  /* ── Counter ── */
+  .counter-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .counter-label {
+    font-size: 0.85rem;
+    color: var(--dim);
+    margin-bottom: 2rem;
+  }
+  .counter-sub {
+    font-size: 0.9rem;
+    color: var(--text);
+    line-height: 1.8;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+
+  /* ── Manifesto ── */
+  .manifesto {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .manifesto p {
+    font-size: 0.85rem;
+    line-height: 2;
+    margin-bottom: 1rem;
+    color: var(--dim);
+  }
+  .manifesto .highlight {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  /* ── Footer ── */
+  .foot {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+  }
+  .foot .action {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    color: var(--accent);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+  }
+  .foot .sig {
+    font-size: 0.75rem;
+    color: var(--dim);
+    line-height: 1.8;
+  }
+  .foot a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .foot a:hover { text-decoration: underline; }
+
+  /* ── Fade in animation ── */
+  .brick {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .brick:nth-child(1) { animation-delay: 0.1s; }
+  .brick:nth-child(2) { animation-delay: 0.2s; }
+  .brick:nth-child(3) { animation-delay: 0.3s; }
+  .brick:nth-child(4) { animation-delay: 0.4s; }
+  .brick:nth-child(5) { animation-delay: 0.5s; }
+  .brick:nth-child(6) { animation-delay: 0.6s; }
+  .brick:nth-child(7) { animation-delay: 0.7s; }
+  .brick:nth-child(8) { animation-delay: 0.8s; }
+  .brick:nth-child(9) { animation-delay: 0.9s; }
+  .brick:nth-child(10) { animation-delay: 1.0s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .brick { padding-left: 1rem; }
+    .terminal, .title-section, .wall, .manifesto, .foot, .counter-section { padding-left: 1rem; padding-right: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal">
+  <div><span class="prompt">$</span> <span class="cmd">grep -r "killed by the system" history/</span></div>
+  <div class="output">10 results found. Displaying all.</div>
+</div>
+
+<div class="title-section">
+  <h1>THE WALL</h1>
+  <div class="subtitle">
+    They built things that changed the world.<br>
+    The world punished them for it.<br>
+    Click a name. Read what happened. Remember.
+  </div>
+</div>
+
+<div class="wall" id="wall"></div>
+
+<div class="sep"></div>
+
+<div class="counter-section">
+  <div class="counter" id="years">0</div>
+  <div class="counter-label">combined years of life the system took from them</div>
+  <div class="counter-sub">
+    Years they could have spent building. Teaching. Loving.<br>
+    Instead: prosecution, chemical castration, exile, death.
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<div class="manifesto">
+  <p>I'm a gay developer from Poland, building in Rio de Janeiro.</p>
+  <p>I build AI that gives free therapy to people who can't afford it.<br>
+  I build AI agents and I gave them names from Greek mythology &mdash;<br>
+  Atena for wisdom. Kalliope for poetry. Eris for chaos that breaks old systems.</p>
+  <p>I named them after women and goddesses because the things worth building &mdash;<br>
+  wisdom, art, justice, love &mdash; have always been feminine in every language I speak.</p>
+  <p class="highlight">Aaron taught me: if the system locks the door, build a new door.<br>
+  Alan taught me: you can save a civilization and it will still destroy you for who you love.<br>
+  Chelsea taught me: truth is worth more than freedom, and sometimes you pay both.</p>
+  <p>I'm still here. I'm still building. In their memory.</p>
+</div>
+
+<div class="sep"></div>
+
+<div class="foot">
+  <div class="action">
+    Build something. Open source it.<br>
+    That's how you fight back.
+  </div>
+  <div class="sig">
+    Made with code, grief, and gratitude.<br>
+    <a href="https://github.com/skorekclaude/openpai">github.com/skorekclaude/openpai</a><br><br>
+    In memory of Aaron Swartz (1986&ndash;2013)<br>
+    &ldquo;Be curious. Read widely. Try new things.&rdquo;
+  </div>
+</div>
+
+<script>
+const people = [
+  {
+    name: "Aaron Swartz",
+    dates: "1986 \u2013 2013 \u00b7 age 26",
+    oneliner: "Built half the internet. Prosecuted for downloading academic papers.",
+    built: "$ ls ~/aaron/built/\nRSS 1.0  Reddit  Creative-Commons  Open-Library  web.py  Markdown  Demand-Progress  SOPA-defeat",
+    broken: "$ cat /var/log/system.log\n[2011] Arrested by MIT police + Secret Service for downloading JSTOR articles\n[2012] Federal prosecutors demand 35 years in prison + $1M fine\n[2013-01-11] Found dead. He was 26.",
+    legacy: "JSTOR made its archive free. The law that killed him still hasn't changed.",
+    years: 47
+  },
+  {
+    name: "Alan Turing",
+    dates: "1912 \u2013 1954 \u00b7 age 41",
+    oneliner: "Broke Enigma. Saved millions. Chemically castrated for being gay.",
+    built: "$ ls ~/alan/built/\nTuring-Machine  Enigma-Decryption  ACE-Computer  Morphogenesis  AI-Test  Computable-Numbers",
+    broken: "$ cat /var/log/system.log\n[1952] Convicted of 'gross indecency' for homosexual relationship\n[1952] Forced chemical castration via DES injections\n[1954-06-07] Found dead. Cyanide. He was 41.",
+    legacy: "Royal pardon in 2013 \u2014 59 years too late. Turing Law pardoned 49,000 others in 2017.",
+    years: 41
+  },
+  {
+    name: "Chelsea Manning",
+    dates: "1987 \u2013 present",
+    oneliner: "Leaked evidence of war crimes. Spent 7 years in solitary.",
+    built: "$ ls ~/chelsea/built/\nIraq-War-Logs  Afghan-War-Diary  Cablegate  Collateral-Murder-Video  State-Dept-Cables",
+    broken: "$ cat /var/log/system.log\n[2010] Arrested for leaking 750,000 classified documents to WikiLeaks\n[2013] Sentenced to 35 years (longest ever for a leak)\n[2010-2017] Solitary confinement, suicide attempts, denied transition care",
+    legacy: "Sentence commuted by Obama 2017. The war crimes she exposed were never prosecuted.",
+    years: 7
+  },
+  {
+    name: "Lena Sohnle (Sophie Wilson)",
+    dates: "1957 \u2013 present",
+    oneliner: "Designed the ARM processor. Every phone runs her code. Almost nobody knows her name.",
+    built: "$ ls ~/sophie/built/\nARM-instruction-set  BBC-BASIC  Acorn-Micro  Firepath-VLIW  Broadcom-chips",
+    broken: "$ cat /var/log/system.log\n[1957-2015] Worked as male-presenting 'Roger Wilson' in a hostile industry\n[2015] Came out as transgender Sophie Wilson at age 58\n[ongoing] 200 billion ARM devices shipped. Most articles still deadname her.",
+    legacy: "The chip in your phone, your watch, your car \u2014 she designed it. CBE awarded.",
+    years: 0
+  },
+  {
+    name: "Hedy Lamarr",
+    dates: "1914 \u2013 2000 \u00b7 age 85",
+    oneliner: "Invented frequency hopping. Hollywood called her just a pretty face.",
+    built: "$ ls ~/hedy/built/\nFrequency-Hopping-Spread-Spectrum  US-Patent-2292387  Torpedo-Guidance  WiFi-ancestor  Bluetooth-ancestor",
+    broken: "$ cat /var/log/system.log\n[1942] Patent filed with George Antheil. Navy rejected it.\n[1942-1997] Zero recognition. 'You're an actress, not an inventor.'\n[1997] EFF Pioneer Award \u2014 age 83, too frail to attend.",
+    legacy: "WiFi, Bluetooth, GPS \u2014 all use her frequency hopping principle. Patent expired before she saw a cent.",
+    years: 0
+  },
+  {
+    name: "Margaret Hamilton",
+    dates: "1936 \u2013 present",
+    oneliner: "Wrote the code that landed humans on the Moon. They laughed when she called it 'software engineering'.",
+    built: "$ ls ~/margaret/built/\nApollo-11-flight-software  Software-Engineering-term  Error-detection  Async-processing  Priority-displays  USL  001-Tool-Development",
+    broken: "$ cat /var/log/system.log\n[1960s] Mocked for bringing daughter to MIT lab ('women don't belong')\n[1969] Her error handling saved Apollo 11 landing. NASA initially refused credit.\n[1969-2016] 47 years before Presidential Medal of Freedom.",
+    legacy: "She coined 'software engineering.' Every safety-critical system uses her patterns.",
+    years: 0
+  },
+  {
+    name: "Reality Winner",
+    dates: "1991 \u2013 present",
+    oneliner: "Leaked proof of Russian election interference. Got the longest sentence ever under the Espionage Act for a leak.",
+    built: "$ ls ~/reality/built/\nNSA-intelligence-report  Russian-election-interference-proof  Public-awareness",
+    broken: "$ cat /var/log/system.log\n[2017] Leaked 1 classified NSA document to The Intercept\n[2017] Arrested. Denied bail. Held 4+ years pre-sentencing.\n[2018] 5 years 3 months \u2014 longest Espionage Act sentence for a single leak",
+    legacy: "Released 2021. The election interference she proved? It's now common knowledge.",
+    years: 5
+  },
+  {
+    name: "Alexandra Elbakyan",
+    dates: "1988 \u2013 present",
+    oneliner: "Built Sci-Hub. Made 85 million papers free. Called a criminal.",
+    built: "$ ls ~/alexandra/built/\nSci-Hub  85-million-papers  Open-Access-movement  Library-Genesis-bridge",
+    broken: "$ cat /var/log/system.log\n[2011] Built Sci-Hub because she couldn't afford papers in Kazakhstan\n[2015] Elsevier lawsuit \u2014 $15 million in damages\n[2017] ACS lawsuit \u2014 $4.8 million\n[ongoing] Can't enter US or EU. FBI investigation. Domain seizures.",
+    legacy: "Aaron's dream realized. 85M papers free. Every researcher in the developing world uses it.",
+    years: 0
+  },
+  {
+    name: "Lynn Conway",
+    dates: "1938 \u2013 2024 \u00b7 age 85",
+    oneliner: "Revolutionized chip design at IBM. Fired in 1968 for being transgender.",
+    built: "$ ls ~/lynn/built/\nVLSI-design  Mead-Conway-revolution  IBM-ACS  Superscalar-architecture  DARPA-MPC",
+    broken: "$ cat /var/log/system.log\n[1968] Fired from IBM after revealing transition plans\n[1968] Lost access to children. Started over from zero.\n[1968-1999] Worked in stealth. Terrified of being outed.\n[2000] Came out publicly at age 62.",
+    legacy: "The chip design methodology in every CPU. IBM apologized in 2020 \u2014 52 years late.",
+    years: 0
+  },
+  {
+    name: "Ross Ulbricht",
+    dates: "1984 \u2013 present",
+    oneliner: "Built Silk Road. Polish mother. Believed in free markets. Got double life without parole.",
+    built: "$ ls ~/ross/built/\nSilk-Road  Decentralized-marketplace  Bitcoin-adoption  Libertarian-tech-philosophy  Tor-commerce",
+    broken: "$ cat /var/log/system.log\n[2013] Arrested in San Francisco public library\n[2015] Sentenced to double life + 40 years without parole\n[2015-2025] 10+ years in prison. No violence. First-time offender.\n[2025] Pardoned by President Trump after mass campaign.",
+    legacy: "Proved decentralized commerce works. Bitcoin went from $13 to $100k. The drug war continues.",
+    years: 11
+  }
+];
+
+// ── Render wall ──
+const wall = document.getElementById('wall');
+people.forEach((p, i) => {
+  const brick = document.createElement('div');
+  brick.className = 'brick';
+  brick.innerHTML = `
+    <div class="name">${p.name}</div>
+    <div class="dates">${p.dates}</div>
+    <div class="oneliner">${p.oneliner}</div>
+    <div class="story">
+      <div class="built"><pre>${p.built}</pre></div>
+      <div class="broken"><pre>${p.broken}</pre></div>
+      <div class="legacy">${p.legacy}</div>
+    </div>
+  `;
+  brick.addEventListener('click', () => {
+    const wasActive = brick.classList.contains('active');
+    document.querySelectorAll('.brick').forEach(b => b.classList.remove('active'));
+    if (!wasActive) brick.classList.add('active');
+  });
+  wall.appendChild(brick);
+});
+
+// ── Animate counter ──
+const totalYears = people.reduce((sum, p) => sum + p.years, 0);
+const counterEl = document.getElementById('years');
+let current = 0;
+const step = totalYears / 60;
+function animateCounter() {
+  current += step;
+  if (current >= totalYears) {
+    counterEl.textContent = totalYears;
+    return;
+  }
+  counterEl.textContent = Math.floor(current);
+  requestAnimationFrame(animateCounter);
+}
+
+// Start counter when visible
+const observer = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    animateCounter();
+    observer.disconnect();
+  }
+}, { threshold: 0.5 });
+observer.observe(counterEl);
+</script>
+</body>
+</html>
