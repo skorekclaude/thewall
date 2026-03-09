@@ -214,6 +214,37 @@
   }
   .foot a:hover { text-decoration: underline; }
 
+  /* ── Language switcher ── */
+  .lang-switch {
+    position: fixed;
+    top: 1rem;
+    right: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .lang-switch button {
+    background: transparent;
+    border: 1px solid var(--dim);
+    color: var(--dim);
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    transition: all 0.2s;
+  }
+  .lang-switch button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .lang-switch button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(212, 168, 83, 0.1);
+  }
+
   /* ── Fade in animation ── */
   .brick {
     opacity: 0;
@@ -243,14 +274,20 @@
 </head>
 <body>
 
+<div class="lang-switch">
+  <button onclick="setLang('en')" id="lang-en" class="active">EN</button>
+  <button onclick="setLang('pl')" id="lang-pl">PL</button>
+  <button onclick="setLang('pt')" id="lang-pt">PT</button>
+</div>
+
 <div class="terminal">
   <div><span class="prompt">$</span> <span class="cmd">grep -r "killed by the system" history/</span></div>
-  <div class="output">10 results found. Displaying all.</div>
+  <div class="output" id="terminal-output">10 results found. Displaying all.</div>
 </div>
 
 <div class="title-section">
   <h1>THE WALL</h1>
-  <div class="subtitle">
+  <div class="subtitle" id="subtitle">
     They built things that changed the world.<br>
     The world punished them for it.<br>
     Click a name. Read what happened. Remember.
@@ -263,8 +300,8 @@
 
 <div class="counter-section">
   <div class="counter" id="years">0</div>
-  <div class="counter-label">combined years of life the system took from them</div>
-  <div class="counter-sub">
+  <div class="counter-label" id="counter-label">combined years of life the system took from them</div>
+  <div class="counter-sub" id="counter-sub">
     Years they could have spent building. Teaching. Loving.<br>
     Instead: prosecution, chemical castration, exile, death.
   </div>
@@ -272,27 +309,16 @@
 
 <div class="sep"></div>
 
-<div class="manifesto">
-  <p>I'm a gay developer from Poland, building in Rio de Janeiro.</p>
-  <p>I build AI that gives free therapy to people who can't afford it.<br>
-  I build AI agents and I gave them names from Greek mythology &mdash;<br>
-  Atena for wisdom. Kalliope for poetry. Eris for chaos that breaks old systems.</p>
-  <p>I named them after women and goddesses because the things worth building &mdash;<br>
-  wisdom, art, justice, love &mdash; have always been feminine in every language I speak.</p>
-  <p class="highlight">Aaron taught me: if the system locks the door, build a new door.<br>
-  Alan taught me: you can save a civilization and it will still destroy you for who you love. The Poles cracked Enigma first — he finished the job.<br>
-  Chelsea taught me: truth is worth more than freedom, and sometimes you pay both.</p>
-  <p>I'm still here. I'm still building. In their memory.</p>
-</div>
+<div class="manifesto" id="manifesto"></div>
 
 <div class="sep"></div>
 
 <div class="foot">
-  <div class="action">
+  <div class="action" id="foot-action">
     Build something. Open source it.<br>
     That's how you fight back.
   </div>
-  <div class="sig">
+  <div class="sig" id="foot-sig">
     Made with code, grief, and gratitude.<br>
     <a href="https://github.com/skorekclaude/openpai">github.com/skorekclaude/openpai</a><br><br>
     In memory of Aaron Swartz (1986&ndash;2013)<br>
@@ -301,127 +327,290 @@
 </div>
 
 <script>
+// ── i18n translations ──
+const i18n = {
+  en: {
+    terminalOutput: "10 results found. Displaying all.",
+    subtitle: "They built things that changed the world.<br>The world punished them for it.<br>Click a name. Read what happened. Remember.",
+    counterLabel: "combined years of life the system took from them",
+    counterSub: "Years they could have spent building. Teaching. Loving.<br>Instead: prosecution, chemical castration, exile, death.",
+    manifesto: [
+      "I'm a gay developer from Poland, building in Rio de Janeiro.",
+      "I build AI that gives free therapy to people who can't afford it.<br>I build AI agents and I gave them names from Greek mythology \u2014<br>Atena for wisdom. Kalliope for poetry. Eris for chaos that breaks old systems.",
+      "I named them after women and goddesses because the things worth building \u2014<br>wisdom, art, justice, love \u2014 have always been feminine in every language I speak.",
+      '<span class="highlight">Aaron taught me: if the system locks the door, build a new door.<br>Alan taught me: you can save a civilization and it will still destroy you for who you love. The Poles cracked Enigma first \u2014 he finished the job.<br>Chelsea taught me: truth is worth more than freedom, and sometimes you pay both.</span>',
+      "I'm still here. I'm still building. In their memory."
+    ],
+    footAction: "Build something. Open source it.<br>That's how you fight back.",
+    footSig: 'Made with code, grief, and gratitude.<br><a href="https://github.com/skorekclaude/openpai">github.com/skorekclaude/openpai</a><br><br>In memory of Aaron Swartz (1986\u20132013)<br>\u201cBe curious. Read widely. Try new things.\u201d'
+  },
+  pl: {
+    terminalOutput: "Znaleziono 10 wynik\u00f3w. Wy\u015bwietlam wszystkie.",
+    subtitle: "Budowali rzeczy, kt\u00f3re zmieni\u0142y \u015bwiat.<br>\u015awiat ukara\u0142 ich za to.<br>Kliknij imi\u0119. Przeczytaj co si\u0119 sta\u0142o. Zapami\u0119taj.",
+    counterLabel: "po\u0142\u0105czonych lat \u017cycia, kt\u00f3re system im zabra\u0142",
+    counterSub: "Lata, kt\u00f3re mogli sp\u0119dzi\u0107 buduj\u0105c. Ucz\u0105c. Kochaj\u0105c.<br>Zamiast tego: proces, kastracja chemiczna, wygnanie, \u015bmier\u0107.",
+    manifesto: [
+      "Jestem gejem, programist\u0105 z Polski. Buduj\u0119 w Rio de Janeiro.",
+      "Buduj\u0119 AI, kt\u00f3re daje darmow\u0105 terapi\u0119 ludziom, kt\u00f3rych nie sta\u0107 na psychologa.<br>Buduj\u0119 agenty AI i nada\u0142em im imiona z mitologii greckiej \u2014<br>Atena dla m\u0105dro\u015bci. Kalliope dla poezji. Eris dla chaosu, kt\u00f3ry \u0142amie stare systemy.",
+      "Nazwa\u0142em je kobietami i boginiami, bo rzeczy warte budowania \u2014<br>m\u0105dro\u015b\u0107, sztuka, sprawiedliwo\u015b\u0107, mi\u0142o\u015b\u0107 \u2014 zawsze by\u0142y rodzaju \u017ce\u0144skiego w ka\u017cdym j\u0119zyku, kt\u00f3rym m\u00f3wi\u0119.",
+      '<span class="highlight">Aaron nauczy\u0142 mnie: je\u015bli system zamyka drzwi, zbuduj nowe.<br>Alan nauczy\u0142 mnie: mo\u017cesz uratowa\u0107 cywilizacj\u0119, a i tak zniszcz\u0105 ci\u0119 za to, kogo kochasz. Polacy z\u0142amali Enigm\u0119 pierwsi \u2014 on doko\u0144czy\u0142 robot\u0119.<br>Chelsea nauczy\u0142a mnie: prawda jest warta wi\u0119cej ni\u017c wolno\u015b\u0107, a czasem p\u0142acisz obydwoma.</span>',
+      "Wci\u0105\u017c tu jestem. Wci\u0105\u017c buduj\u0119. W ich pami\u0119ci."
+    ],
+    footAction: "Zbuduj co\u015b. Udost\u0119pnij kod \u017ar\u00f3d\u0142owy.<br>Tak si\u0119 walczy.",
+    footSig: 'Zrobione z kodu, \u017calu i wdzi\u0119czno\u015bci.<br><a href="https://github.com/skorekclaude/openpai">github.com/skorekclaude/openpai</a><br><br>Pami\u0119ci Aarona Swartza (1986\u20132013)<br>\u201eB\u0105d\u017a ciekaw. Czytaj du\u017co. Pr\u00f3buj nowych rzeczy.\u201d'
+  },
+  pt: {
+    terminalOutput: "10 resultados encontrados. Exibindo todos.",
+    subtitle: "Eles constru\u00edram coisas que mudaram o mundo.<br>O mundo os puniu por isso.<br>Clique em um nome. Leia o que aconteceu. Lembre.",
+    counterLabel: "anos combinados de vida que o sistema tirou deles",
+    counterSub: "Anos que poderiam ter passado construindo. Ensinando. Amando.<br>Em vez disso: processo, castra\u00e7\u00e3o qu\u00edmica, ex\u00edlio, morte.",
+    manifesto: [
+      "Sou um desenvolvedor gay da Pol\u00f4nia. Construo no Rio de Janeiro.",
+      "Construo IA que d\u00e1 terapia gratuita para quem n\u00e3o pode pagar um psic\u00f3logo.<br>Construo agentes de IA e dei a eles nomes da mitologia grega \u2014<br>Atena para sabedoria. Kalliope para poesia. Eris para o caos que quebra sistemas antigos.",
+      "Dei a eles nomes de mulheres e deusas porque as coisas que valem a pena construir \u2014<br>sabedoria, arte, justi\u00e7a, amor \u2014 sempre foram femininas em cada idioma que eu falo.",
+      '<span class="highlight">Aaron me ensinou: se o sistema tranca a porta, construa uma nova.<br>Alan me ensinou: voc\u00ea pode salvar uma civiliza\u00e7\u00e3o e ela ainda vai te destruir por quem voc\u00ea ama. Os poloneses quebraram a Enigma primeiro \u2014 ele terminou o trabalho.<br>Chelsea me ensinou: a verdade vale mais que a liberdade, e \u00e0s vezes voc\u00ea paga com as duas.</span>',
+      "Ainda estou aqui. Ainda estou construindo. Na mem\u00f3ria deles."
+    ],
+    footAction: "Construa algo. Abra o c\u00f3digo.<br>\u00c9 assim que se luta.",
+    footSig: 'Feito com c\u00f3digo, luto e gratid\u00e3o.<br><a href="https://github.com/skorekclaude/openpai">github.com/skorekclaude/openpai</a><br><br>Em mem\u00f3ria de Aaron Swartz (1986\u20132013)<br>\u201cSeja curioso. Leia muito. Tente coisas novas.\u201d'
+  }
+};
+
+// ── People data with i18n ──
 const people = [
   {
     name: "Aaron Swartz",
     dates: "1986 \u2013 2013 \u00b7 age 26",
-    oneliner: "Built half the internet. Prosecuted for downloading academic papers.",
+    oneliner: {
+      en: "Built half the internet. Prosecuted for downloading academic papers.",
+      pl: "Zbudowa\u0142 p\u00f3\u0142 internetu. \u015acigany za pobieranie artyku\u0142\u00f3w naukowych.",
+      pt: "Construiu metade da internet. Processado por baixar artigos acad\u00eamicos."
+    },
     built: "$ ls ~/aaron/built/\nRSS 1.0  Reddit  Creative-Commons  Open-Library  web.py  Markdown  Demand-Progress  SOPA-defeat",
     broken: "$ cat /var/log/system.log\n[2011] Arrested by MIT police + Secret Service for downloading JSTOR articles\n[2012] Federal prosecutors demand 35 years in prison + $1M fine\n[2013-01-11] Found dead. He was 26.",
-    legacy: "JSTOR made its archive free. The law that killed him still hasn't changed.",
+    legacy: {
+      en: "JSTOR made its archive free. The law that killed him still hasn't changed.",
+      pl: "JSTOR udost\u0119pni\u0142 archiwum za darmo. Prawo, kt\u00f3re go zabi\u0142o, wci\u0105\u017c si\u0119 nie zmieni\u0142o.",
+      pt: "O JSTOR liberou seu acervo. A lei que o matou ainda n\u00e3o mudou."
+    },
     years: 47
   },
   {
     name: "Alan Turing",
     dates: "1912 \u2013 1954 \u00b7 age 41",
-    oneliner: "Advanced Enigma-breaking (Polish cryptographers cracked it first). Saved millions. Chemically castrated for being gay.",
-    built: "$ ls ~/alan/built/\nTuring-Machine  Bombe-machine  ACE-Computer  Morphogenesis  AI-Test  Computable-Numbers\n# Note: Enigma first broken by Polish mathematicians Rejewski, Różycki, Zygalski (1932)",
+    oneliner: {
+      en: "Advanced Enigma-breaking (Polish cryptographers cracked it first). Saved millions. Chemically castrated for being gay.",
+      pl: "Rozwin\u0105\u0142 \u0142amanie Enigmy (polscy kryptolodzy z\u0142amali j\u0105 pierwsi). Uratowa\u0142 miliony. Wykastrowany chemicznie za homoseksualizm.",
+      pt: "Avan\u00e7ou a quebra da Enigma (cript\u00f3grafos poloneses a quebraram primeiro). Salvou milh\u00f5es. Castrado quimicamente por ser gay."
+    },
+    built: "$ ls ~/alan/built/\nTuring-Machine  Bombe-machine  ACE-Computer  Morphogenesis  AI-Test  Computable-Numbers\n# Note: Enigma first broken by Polish mathematicians Rejewski, R\u00f3\u017cycki, Zygalski (1932)",
     broken: "$ cat /var/log/system.log\n[1952] Convicted of 'gross indecency' for homosexual relationship\n[1952] Forced chemical castration via DES injections\n[1954-06-07] Found dead. Cyanide. He was 41.",
-    legacy: "Royal pardon in 2013 \u2014 59 years too late. Turing Law pardoned 49,000 others in 2017.",
+    legacy: {
+      en: "Royal pardon in 2013 \u2014 59 years too late. Turing Law pardoned 49,000 others in 2017.",
+      pl: "Kr\u00f3lewskie u\u0142askawienie w 2013 \u2014 59 lat za p\u00f3\u017ano. Prawo Turinga u\u0142askawi\u0142o 49 000 innych w 2017.",
+      pt: "Perd\u00e3o real em 2013 \u2014 59 anos tarde demais. A Lei Turing perdoou 49.000 outros em 2017."
+    },
     years: 41
   },
   {
     name: "Chelsea Manning",
     dates: "1987 \u2013 present",
-    oneliner: "Leaked evidence of war crimes. Spent 7 years in solitary.",
+    oneliner: {
+      en: "Leaked evidence of war crimes. Spent 7 years in solitary.",
+      pl: "Ujawni\u0142a dowody zbrodni wojennych. Sp\u0119dzi\u0142a 7 lat w izolatce.",
+      pt: "Vazou evid\u00eancias de crimes de guerra. Passou 7 anos em solit\u00e1ria."
+    },
     built: "$ ls ~/chelsea/built/\nIraq-War-Logs  Afghan-War-Diary  Cablegate  Collateral-Murder-Video  State-Dept-Cables",
     broken: "$ cat /var/log/system.log\n[2010] Arrested for leaking 750,000 classified documents to WikiLeaks\n[2013] Sentenced to 35 years (longest ever for a leak)\n[2010-2017] Solitary confinement, suicide attempts, denied transition care",
-    legacy: "Sentence commuted by Obama 2017. The war crimes she exposed were never prosecuted.",
+    legacy: {
+      en: "Sentence commuted by Obama 2017. The war crimes she exposed were never prosecuted.",
+      pl: "Wyrok z\u0142agodzony przez Obam\u0119 w 2017. Zbrodnie wojenne, kt\u00f3re ujawni\u0142a, nigdy nie zosta\u0142y os\u0105dzone.",
+      pt: "Senten\u00e7a comutada por Obama em 2017. Os crimes de guerra que ela expôs nunca foram julgados."
+    },
     years: 7
   },
   {
     name: "Lena Sohnle (Sophie Wilson)",
     dates: "1957 \u2013 present",
-    oneliner: "Designed the ARM processor. Every phone runs her code. Almost nobody knows her name.",
+    oneliner: {
+      en: "Designed the ARM processor. Every phone runs her code. Almost nobody knows her name.",
+      pl: "Zaprojektowa\u0142a procesor ARM. Ka\u017cdy telefon dzia\u0142a na jej kodzie. Prawie nikt nie zna jej imienia.",
+      pt: "Projetou o processador ARM. Todo celular roda seu c\u00f3digo. Quase ningu\u00e9m sabe seu nome."
+    },
     built: "$ ls ~/sophie/built/\nARM-instruction-set  BBC-BASIC  Acorn-Micro  Firepath-VLIW  Broadcom-chips",
     broken: "$ cat /var/log/system.log\n[1957-2015] Worked as male-presenting 'Roger Wilson' in a hostile industry\n[2015] Came out as transgender Sophie Wilson at age 58\n[ongoing] 200 billion ARM devices shipped. Most articles still deadname her.",
-    legacy: "The chip in your phone, your watch, your car \u2014 she designed it. CBE awarded.",
+    legacy: {
+      en: "The chip in your phone, your watch, your car \u2014 she designed it. CBE awarded.",
+      pl: "Chip w twoim telefonie, zegarku, samochodzie \u2014 ona go zaprojektowa\u0142a. Odznaczona CBE.",
+      pt: "O chip no seu celular, rel\u00f3gio, carro \u2014 ela projetou. Condecorada com CBE."
+    },
     years: 0
   },
   {
     name: "Hedy Lamarr",
     dates: "1914 \u2013 2000 \u00b7 age 85",
-    oneliner: "Invented frequency hopping. Hollywood called her just a pretty face.",
+    oneliner: {
+      en: "Invented frequency hopping. Hollywood called her just a pretty face.",
+      pl: "Wynalaz\u0142a przeskakiwanie cz\u0119stotliwo\u015bci. Hollywood m\u00f3wi\u0142o, \u017ce jest tylko \u0142adn\u0105 buzi\u0105.",
+      pt: "Inventou o salto de frequ\u00eancia. Hollywood dizia que era s\u00f3 um rosto bonito."
+    },
     built: "$ ls ~/hedy/built/\nFrequency-Hopping-Spread-Spectrum  US-Patent-2292387  Torpedo-Guidance  WiFi-ancestor  Bluetooth-ancestor",
     broken: "$ cat /var/log/system.log\n[1942] Patent filed with George Antheil. Navy rejected it.\n[1942-1997] Zero recognition. 'You're an actress, not an inventor.'\n[1997] EFF Pioneer Award \u2014 age 83, too frail to attend.",
-    legacy: "WiFi, Bluetooth, GPS \u2014 all use her frequency hopping principle. Patent expired before she saw a cent.",
+    legacy: {
+      en: "WiFi, Bluetooth, GPS \u2014 all use her frequency hopping principle. Patent expired before she saw a cent.",
+      pl: "WiFi, Bluetooth, GPS \u2014 wszystkie u\u017cywaj\u0105 jej zasady przeskakiwania cz\u0119stotliwo\u015bci. Patent wygas\u0142, zanim zobaczy\u0142a z niego grosza.",
+      pt: "WiFi, Bluetooth, GPS \u2014 todos usam seu princ\u00edpio de salto de frequ\u00eancia. A patente expirou antes que ela visse um centavo."
+    },
     years: 0
   },
   {
     name: "Margaret Hamilton",
     dates: "1936 \u2013 present",
-    oneliner: "Wrote the code that landed humans on the Moon. They laughed when she called it 'software engineering'.",
+    oneliner: {
+      en: "Wrote the code that landed humans on the Moon. They laughed when she called it 'software engineering'.",
+      pl: "Napisa\u0142a kod, kt\u00f3ry wyl\u0105dowa\u0142 ludzi na Ksi\u0119\u017cycu. \u015amiali si\u0119, gdy nazwa\u0142a to 'in\u017cyni\u0105ri\u0105 oprogramowania'.",
+      pt: "Escreveu o c\u00f3digo que pousou humanos na Lua. Riram quando ela chamou de 'engenharia de software'."
+    },
     built: "$ ls ~/margaret/built/\nApollo-11-flight-software  Software-Engineering-term  Error-detection  Async-processing  Priority-displays  USL  001-Tool-Development",
     broken: "$ cat /var/log/system.log\n[1960s] Mocked for bringing daughter to MIT lab ('women don't belong')\n[1969] Her error handling saved Apollo 11 landing. NASA initially refused credit.\n[1969-2016] 47 years before Presidential Medal of Freedom.",
-    legacy: "She coined 'software engineering.' Every safety-critical system uses her patterns.",
+    legacy: {
+      en: "She coined 'software engineering.' Every safety-critical system uses her patterns.",
+      pl: "Ukuła termin 'in\u017cynieria oprogramowania'. Ka\u017cdy system krytyczny dla bezpiecze\u0144stwa u\u017cywa jej wzorcó.",
+      pt: "Ela cunhou 'engenharia de software'. Todo sistema cr\u00edtico de seguran\u00e7a usa seus padr\u00f5es."
+    },
     years: 0
   },
   {
     name: "Reality Winner",
     dates: "1991 \u2013 present",
-    oneliner: "Leaked proof of Russian election interference. Got the longest sentence ever under the Espionage Act for a leak.",
+    oneliner: {
+      en: "Leaked proof of Russian election interference. Got the longest sentence ever under the Espionage Act for a leak.",
+      pl: "Ujawni\u0142a dow\u00f3d ingerencji Rosji w wybory. Dosta\u0142a najd\u0142u\u017cszy wyrok w historii ustawy o szpiegostwie za wyciek.",
+      pt: "Vazou prova de interfer\u00eancia russa nas elei\u00e7\u00f5es. Recebeu a maior senten\u00e7a da Lei de Espionagem por um vazamento."
+    },
     built: "$ ls ~/reality/built/\nNSA-intelligence-report  Russian-election-interference-proof  Public-awareness",
     broken: "$ cat /var/log/system.log\n[2017] Leaked 1 classified NSA document to The Intercept\n[2017] Arrested. Denied bail. Held 4+ years pre-sentencing.\n[2018] 5 years 3 months \u2014 longest Espionage Act sentence for a single leak",
-    legacy: "Released 2021. The election interference she proved? It's now common knowledge.",
+    legacy: {
+      en: "Released 2021. The election interference she proved? It's now common knowledge.",
+      pl: "Zwolniona w 2021. Ingerencja w wybory, kt\u00f3r\u0105 udowodni\u0142a? Teraz to wiedza powszechna.",
+      pt: "Liberada em 2021. A interfer\u00eancia eleitoral que ela provou? Agora \u00e9 conhecimento comum."
+    },
     years: 5
   },
   {
     name: "Alexandra Elbakyan",
     dates: "1988 \u2013 present",
-    oneliner: "Built Sci-Hub. Made 85 million papers free. Called a criminal.",
+    oneliner: {
+      en: "Built Sci-Hub. Made 85 million papers free. Called a criminal.",
+      pl: "Zbudowa\u0142a Sci-Hub. Udost\u0119pni\u0142a 85 milion\u00f3w artyku\u0142\u00f3w za darmo. Nazwana przest\u0119pc\u0105.",
+      pt: "Construiu o Sci-Hub. Liberou 85 milh\u00f5es de artigos. Chamada de criminosa."
+    },
     built: "$ ls ~/alexandra/built/\nSci-Hub  85-million-papers  Open-Access-movement  Library-Genesis-bridge",
     broken: "$ cat /var/log/system.log\n[2011] Built Sci-Hub because she couldn't afford papers in Kazakhstan\n[2015] Elsevier lawsuit \u2014 $15 million in damages\n[2017] ACS lawsuit \u2014 $4.8 million\n[ongoing] Can't enter US or EU. FBI investigation. Domain seizures.",
-    legacy: "Aaron's dream realized. 85M papers free. Every researcher in the developing world uses it.",
+    legacy: {
+      en: "Aaron's dream realized. 85M papers free. Every researcher in the developing world uses it.",
+      pl: "Spe\u0142nione marzenie Aarona. 85M artyku\u0142\u00f3w za darmo. Ka\u017cdy badacz w krajach rozwijaj\u0105cych si\u0119 tego u\u017cywa.",
+      pt: "O sonho de Aaron realizado. 85M de artigos grátis. Todo pesquisador do mundo em desenvolvimento usa."
+    },
     years: 0
   },
   {
     name: "Lynn Conway",
     dates: "1938 \u2013 2024 \u00b7 age 85",
-    oneliner: "Revolutionized chip design at IBM. Fired in 1968 for being transgender.",
+    oneliner: {
+      en: "Revolutionized chip design at IBM. Fired in 1968 for being transgender.",
+      pl: "Zrewolucjonizowa\u0142a projektowanie chip\u00f3w w IBM. Zwolniona w 1968 za bycie transpłciow\u0105.",
+      pt: "Revolucionou o design de chips na IBM. Demitida em 1968 por ser transg\u00eanero."
+    },
     built: "$ ls ~/lynn/built/\nVLSI-design  Mead-Conway-revolution  IBM-ACS  Superscalar-architecture  DARPA-MPC",
     broken: "$ cat /var/log/system.log\n[1968] Fired from IBM after revealing transition plans\n[1968] Lost access to children. Started over from zero.\n[1968-1999] Worked in stealth. Terrified of being outed.\n[2000] Came out publicly at age 62.",
-    legacy: "The chip design methodology in every CPU. IBM apologized in 2020 \u2014 52 years late.",
+    legacy: {
+      en: "The chip design methodology in every CPU. IBM apologized in 2020 \u2014 52 years late.",
+      pl: "Metodologia projektowania chip\u00f3w w ka\u017cdym procesorze. IBM przeprosi\u0142o w 2020 \u2014 52 lata za p\u00f3\u017ano.",
+      pt: "A metodologia de design de chips em todo CPU. A IBM pediu desculpas em 2020 \u2014 52 anos atrasada."
+    },
     years: 0
   },
   {
     name: "Ross Ulbricht",
     dates: "1984 \u2013 present",
-    oneliner: "Built Silk Road. Polish mother. Believed in free markets. Got double life without parole.",
+    oneliner: {
+      en: "Built Silk Road. Polish mother. Believed in free markets. Got double life without parole.",
+      pl: "Zbudowa\u0142 Silk Road. Polska matka. Wierzy\u0142 w wolny rynek. Dosta\u0142 podw\u00f3jne do\u017cywocie bez mo\u017cliwo\u015bci zwolnienia.",
+      pt: "Construiu o Silk Road. M\u00e3e polonesa. Acreditava em mercados livres. Pegou pris\u00e3o perp\u00e9tua dupla sem condic."
+    },
     built: "$ ls ~/ross/built/\nSilk-Road  Decentralized-marketplace  Bitcoin-adoption  Libertarian-tech-philosophy  Tor-commerce",
     broken: "$ cat /var/log/system.log\n[2013] Arrested in San Francisco public library\n[2015] Sentenced to double life + 40 years without parole\n[2015-2025] 10+ years in prison. No violence. First-time offender.\n[2025] Pardoned by President Trump after mass campaign.",
-    legacy: "Proved decentralized commerce works. Bitcoin went from $13 to $100k. The drug war continues.",
+    legacy: {
+      en: "Proved decentralized commerce works. Bitcoin went from $13 to $100k. The drug war continues.",
+      pl: "Udowodni\u0142, \u017ce zdecentralizowany handel dzia\u0142a. Bitcoin wzr\u00f3s\u0142 z $13 do $100k. Wojna narkotykowa trwa.",
+      pt: "Provou que o com\u00e9rcio descentralizado funciona. Bitcoin foi de $13 para $100k. A guerra \u00e0s drogas continua."
+    },
     years: 11
   }
 ];
 
+// ── Current language ──
+let currentLang = (location.hash.replace('#','') || 'en');
+if (!i18n[currentLang]) currentLang = 'en';
+
 // ── Render wall ──
 const wall = document.getElementById('wall');
-people.forEach((p, i) => {
-  const brick = document.createElement('div');
-  brick.className = 'brick';
-  brick.innerHTML = `
-    <div class="name">${p.name}</div>
-    <div class="dates">${p.dates}</div>
-    <div class="oneliner">${p.oneliner}</div>
-    <div class="story">
-      <div class="built"><pre>${p.built}</pre></div>
-      <div class="broken"><pre>${p.broken}</pre></div>
-      <div class="legacy">${p.legacy}</div>
-    </div>
-  `;
-  brick.addEventListener('click', () => {
-    const wasActive = brick.classList.contains('active');
-    document.querySelectorAll('.brick').forEach(b => b.classList.remove('active'));
-    if (!wasActive) brick.classList.add('active');
+function renderWall() {
+  wall.innerHTML = '';
+  people.forEach((p, i) => {
+    const brick = document.createElement('div');
+    brick.className = 'brick';
+    const ol = typeof p.oneliner === 'string' ? p.oneliner : (p.oneliner[currentLang] || p.oneliner.en);
+    const lg = typeof p.legacy === 'string' ? p.legacy : (p.legacy[currentLang] || p.legacy.en);
+    brick.innerHTML =
+      '<div class="name">' + p.name + '</div>' +
+      '<div class="dates">' + p.dates + '</div>' +
+      '<div class="oneliner">' + ol + '</div>' +
+      '<div class="story">' +
+        '<div class="built"><pre>' + p.built + '</pre></div>' +
+        '<div class="broken"><pre>' + p.broken + '</pre></div>' +
+        '<div class="legacy">' + lg + '</div>' +
+      '</div>';
+    brick.addEventListener('click', function() {
+      var wasActive = brick.classList.contains('active');
+      document.querySelectorAll('.brick').forEach(function(b) { b.classList.remove('active'); });
+      if (!wasActive) brick.classList.add('active');
+    });
+    wall.appendChild(brick);
   });
-  wall.appendChild(brick);
-});
+}
+
+function updateUI() {
+  var t = i18n[currentLang] || i18n.en;
+  document.getElementById('terminal-output').textContent = t.terminalOutput;
+  document.getElementById('subtitle').innerHTML = t.subtitle;
+  document.getElementById('counter-label').textContent = t.counterLabel;
+  document.getElementById('counter-sub').innerHTML = t.counterSub;
+  document.getElementById('manifesto').innerHTML = t.manifesto.map(function(p) { return '<p>' + p + '</p>'; }).join('');
+  document.getElementById('foot-action').innerHTML = t.footAction;
+  document.getElementById('foot-sig').innerHTML = t.footSig;
+  document.querySelectorAll('.lang-switch button').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.getElementById('lang-' + currentLang);
+  if (btn) btn.classList.add('active');
+  document.documentElement.lang = currentLang;
+  renderWall();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  location.hash = lang;
+  updateUI();
+}
+
+// ── Init ──
+updateUI();
 
 // ── Animate counter ──
-const totalYears = people.reduce((sum, p) => sum + p.years, 0);
-const counterEl = document.getElementById('years');
-let current = 0;
-const step = totalYears / 60;
+var totalYears = people.reduce(function(sum, p) { return sum + p.years; }, 0);
+var counterEl = document.getElementById('years');
+var current = 0;
+var step = totalYears / 60;
 function animateCounter() {
   current += step;
   if (current >= totalYears) {
@@ -433,7 +622,7 @@ function animateCounter() {
 }
 
 // Start counter when visible
-const observer = new IntersectionObserver((entries) => {
+var observer = new IntersectionObserver(function(entries) {
   if (entries[0].isIntersecting) {
     animateCounter();
     observer.disconnect();
