@@ -52,7 +52,7 @@ Ross Ulbricht built Silk Road — a decentralized marketplace that proved Bitcoi
 
 I built a wall for them. An interactive memorial in code. You click a name, and you see two things: what they built (in green, like `$ ls ~/built/`) and what the system did to them (in red, like `$ cat /var/log/system.log`). Terminal format — because we're developers. We read logs. These are the logs nobody wanted us to read.
 
-{% codepen https://codepen.io/paifamily/pen/thewall %}
+{% codepen https://codepen.io/skorekclaude/pen/qEaaZwE %}
 
 ## Why I build in the open
 
@@ -85,7 +85,7 @@ You and I — we're still here. We can still push code. That's not nothing. That
 
 ---
 
-**The Wall** — interactive memorial: [GitHub](https://github.com/skorekclaude/openpai) | [Live](https://codepen.io/paifamily/pen/thewall)
+**The Wall** — interactive memorial: [GitHub](https://github.com/skorekclaude/thewall) | [CodePen](https://codepen.io/skorekclaude/pen/qEaaZwE) | [Live](https://skorekclaude.github.io/thewall/)
 
 **PAI Family** — 13 AI agents, open source: [github.com/skorekclaude/openpai](https://github.com/skorekclaude/openpai)
 
