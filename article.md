@@ -40,7 +40,7 @@ Seven of my thirteen agents are feminine. Not because I sat down and planned gen
 
 ## What the system does to people like us
 
-Alan Turing broke Enigma. His work saved an estimated 14 million lives and shortened World War II by two years. The British government chemically castrated him for being gay. He was 41 when he died.
+Alan Turing advanced the breaking of Enigma — building on the work of Polish cryptographers Marian Rejewski, Jerzy Różycki, and Henryk Zygalski, who cracked it first. His work at Bletchley Park saved an estimated 14 million lives and shortened World War II by two years. The British government chemically castrated him for being gay. He was 41 when he died.
 
 Sophie Wilson designed the ARM instruction set. The chip in your phone, your watch, your car — she built the architecture. She spent 58 years hiding who she was because the industry told her she couldn't be both brilliant and transgender.
 

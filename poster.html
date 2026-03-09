@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1000">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    width: 1000px;
+    height: 420px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 4rem;
+    position: relative;
+  }
+
+  /* Subtle grain overlay */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.008) 2px,
+      rgba(255,255,255,0.008) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .prompt-line {
+    font-size: 0.7rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+  .prompt-line .green { color: #22c55e; }
+  .prompt-line .white { color: #e0e0e0; }
+
+  .title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: #e0e0e0;
+    margin-bottom: 2rem;
+  }
+
+  .names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .name-entry {
+    font-size: 0.65rem;
+    line-height: 1.8;
+    color: #555;
+    white-space: nowrap;
+  }
+  .name-entry .n { color: #60a5fa; }
+  .name-entry .status-killed { color: #ef4444; }
+  .name-entry .status-imprisoned { color: #f59e0b; }
+  .name-entry .status-exiled { color: #a855f7; }
+  .name-entry .status-erased { color: #6b7280; }
+  .name-entry .status-pardoned { color: #22c55e; }
+
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .counter-line {
+    font-size: 1.1rem;
+    color: #d4a853;
+    font-weight: 700;
+  }
+
+  .tagline {
+    font-size: 0.65rem;
+    color: #555;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .tagline .accent { color: #d4a853; }
+</style>
+</head>
+<body>
+
+<div class="prompt-line">
+  <span class="green">$</span> <span class="white">grep -r "killed by the system" history/</span>
+  &nbsp;&nbsp;<span>// 10 results found</span>
+</div>
+
+<div class="title">T H E &nbsp; W A L L</div>
+
+<div class="names">
+  <div class="name-entry"><span class="n">Aaron Swartz</span> &middot; 1986-2013 &middot; <span class="status-killed">DEAD AT 26</span></div>
+  <div class="name-entry"><span class="n">Alan Turing</span> &middot; 1912-1954 &middot; <span class="status-killed">DEAD AT 41</span></div>
+  <div class="name-entry"><span class="n">Chelsea Manning</span> &middot; 1987- &middot; <span class="status-imprisoned">7 YRS SOLITARY</span></div>
+  <div class="name-entry"><span class="n">Sophie Wilson</span> &middot; 1957- &middot; <span class="status-erased">58 YRS HIDDEN</span></div>
+  <div class="name-entry"><span class="n">Hedy Lamarr</span> &middot; 1914-2000 &middot; <span class="status-erased">55 YRS IGNORED</span></div>
+  <div class="name-entry"><span class="n">Margaret Hamilton</span> &middot; 1936- &middot; <span class="status-erased">47 YRS UNCREDITED</span></div>
+  <div class="name-entry"><span class="n">Reality Winner</span> &middot; 1991- &middot; <span class="status-imprisoned">5 YRS PRISON</span></div>
+  <div class="name-entry"><span class="n">Alexandra Elbakyan</span> &middot; 1988- &middot; <span class="status-exiled">EXILED</span></div>
+  <div class="name-entry"><span class="n">Lynn Conway</span> &middot; 1938-2024 &middot; <span class="status-erased">32 YRS STEALTH</span></div>
+  <div class="name-entry"><span class="n">Ross Ulbricht</span> &middot; 1984- &middot; <span class="status-pardoned">11 YRS &rarr; PARDONED</span></div>
+</div>
+
+<div class="bottom">
+  <div class="counter-line">111 combined years taken</div>
+  <div class="tagline">
+    <span class="accent">Build something. Open source it.</span><br>
+    That's how you fight back.
+  </div>
+</div>
+
+</body>
+</html>
